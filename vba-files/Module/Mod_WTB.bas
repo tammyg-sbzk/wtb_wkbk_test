@@ -425,7 +425,7 @@ Str1 = Str1 & Col_WTB(2) & I
 Str2 = Str2 & Col_WTB(7) & I
 End If  ' Income
 Debug.Print "Income Str1>" & Str1 & "<"
-FindRow WTB_Sheet, "A", I, "<TOT_SUB><EXPENSE>"
+FindRow WTB_Sheet, "A", I, "<TOT_SUB><EXPENSES>"
 If I > 0 Then
     If Tmp1_I > 0 Then
         Str1 = Str1 & "+"
