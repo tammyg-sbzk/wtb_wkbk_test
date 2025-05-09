@@ -486,8 +486,9 @@ Debug.Print "Purge>" & WTB_Sheet; "<"
 FindRow WTB_Sheet, "A", WTB_Row, "<HDR>"
 WTB_Row = WTB_Row + 1
 FindLastRow WTB_Sheet, Tmp_Row
+FindColNumLtr WTB_Sheet, 1, I, Tmp_Col, "<END_DEL>"
 Worksheets(WTB_Sheet).Unprotect
-If Tmp_Row >= WTB_Row Then Worksheets(WTB_Sheet).Range("A" & WTB_Row & ":" & "A" & Tmp_Row).EntireRow.Delete
+If Tmp_Row >= WTB_Row Then Worksheets(WTB_Sheet).Range("A" & WTB_Row & ":" & Tmp_Col & Tmp_Row).Delete Shift:=xlUp
 Debug.Print "Build WTB Arrays"
 For I = 1 To 5
     FindColNumLtr WTB_Sheet, 1, Tmp_Row, Col_WTB(I), Find_WTB(I)
@@ -756,15 +757,17 @@ Target_Wrkbk = ActiveWorkbook.Name
 Set Wbp1 = Workbooks.Open(This_Import)
 wsh.Range("A1:AE1000").Value = Wbp1.Sheets(1).Range("A1:AE1000").Value
 wsh.Columns("A:AE").AutoFit
-If wsh.Range("A1").Value = "Account List" Then
-    wsh.Range("A1:A3").EntireRow.Delete
-ElseIf wsh.Range("A1").Value = "" Then
-    wsh.Range("A1").EntireColumn.Delete
-End If
-wsh.Range("A1").EntireRow.Delete
+For each cell in wsh.range("A1:E10")
+    if cell.value = "Account" or cell.value = "Full name" Then
+        If cell.column > 1 then wsh.range("A1:A" & cell.column).entirecolumn.delete
+        wsh.range("A1:A" & cell.row).entirerow.delete
+        exit for
+    end if
+next cell 
 wsh.Range("D1").Formula = "=IFERROR(XMATCH(""TOTAL"",A:A),XMATCH(,A:A))"
 Dim numRows As Integer
 numRows = wsh.Range("D1").Value
+wsh.Range("A" & numRows + 1 & ":A" & numRows + 10).EntireRow.Delete
 wsh.Range("A" & numRows & ":A" & numRows + 50).EntireRow.Delete
 wsh.Visible = False
 Wbp1.Close SaveChanges:=False
