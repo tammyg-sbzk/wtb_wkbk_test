@@ -225,12 +225,12 @@ ErrSub:
     If WTB_Beg > 0 And WTB_End > WTB_Beg Then
         FindLastRow Notes_Sheet, I
         If I > 0 Then
-            Worksheets(Notes_Sheet).Range("A1:" & Tmp_Col & I).EntireRow.Delete
+            Worksheets(Notes_Sheet).Range("A1:A" & I).EntireRow.Delete
         End If  ' Purge Notes_Sheet
         Worksheets(WTB_Sheet).Range(Tmp1_S & (WTB_Beg + 1) & ":" & Tmp2_S & WTB_End).Copy
         Worksheets(Notes_Sheet).Range("A1").PasteSpecial xlPasteValues
         Application.CutCopyMode = False
-        Worksheets(WTB_Sheet).Range("A" & (WTB_Beg + 1) & ":" & Tmp_Col & WTB_End).EntireRow.Delete
+        Worksheets(WTB_Sheet).Range("A" & (WTB_Beg + 1) & ":A" & WTB_End).EntireRow.Delete
     End If  ' Save Notes
     FindRow WTB_Sheet, "A", WTB_Beg, "<HDR>"
     WTB_Beg = WTB_Beg + 1
@@ -239,7 +239,7 @@ ErrSub:
     For I = WTB_End To WTB_Beg Step -1
         If Left(Worksheets(WTB_Sheet).Range("A" & I).Value, 4) = "<TOT" Then
             'Debug.Print ">" & I & "<>" & Worksheets(WTB_Sheet).Range("A" & I).Value & "<"
-            Worksheets(WTB_Sheet).Range("A" & I & ":" & Tmp_Col & I).EntireRow.Delete
+            Worksheets(WTB_Sheet).Range("A" & I & ":A" & I).EntireRow.Delete
         End If
     Next I
     
@@ -341,10 +341,10 @@ ErrSub:
         If Worksheets(WTB_Sheet).Range(Col_Ltr_Subtotal(2) & I).Value = "SUBTOTAL" Then
             Sub_Beg = Worksheets(WTB_Sheet).Range(Col_Ltr_Subtotal(3) & I).Value
             Sub_End = Worksheets(WTB_Sheet).Range(Col_Ltr_Subtotal(5) & I).Value
-            ActiveSheet.Range("A" & (Sub_End + 1) & ":" & Tmp_Col & (Sub_End + 1)).EntireRow.Insert
+            ActiveSheet.Range("A" & (Sub_End + 1) & ":A" & (Sub_End + 1)).EntireRow.Insert
             Worksheets(WTB_Sheet).Range("A" & Sub_End + 1).Value = "<TOT_BLANK>"
             Worksheets(WTB_Sheet).Range("A" & Sub_End + 1).RowHeight = 10
-            ActiveSheet.Range("A" & (Sub_End + 2) & ":" & Tmp_Col & (Sub_End + 2)).EntireRow.Insert
+            ActiveSheet.Range("A" & (Sub_End + 2) & ":A" & (Sub_End + 2)).EntireRow.Insert
             Worksheets(WTB_Sheet).Range("A" & Sub_End + 2).Value = "<TOT_SUB><" & UCase(Worksheets(WTB_Sheet).Range(Col_Ltr_Subtotal(1) & I).Value) & ">"
             Worksheets(WTB_Sheet).Range(Col_Ltr_TB(1) & Sub_End + 2).Value = "TOTAL " & UCase(Worksheets(WTB_Sheet).Range(Col_Ltr_Subtotal(1) & I).Value)
             ' Insert Totals
@@ -360,7 +360,7 @@ ErrSub:
             Worksheets(WTB_Sheet).Range(Col_Ltr_TB(2) & (Sub_End + 1)).Borders(xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
             Worksheets(WTB_Sheet).Range(Col_Ltr_TB(7) & (Sub_End + 1)).Borders(xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
             
-            ActiveSheet.Range("A" & (Sub_End + 3) & ":" & Tmp_Col & (Sub_End + 3)).EntireRow.Insert
+            ActiveSheet.Range("A" & (Sub_End + 3) & ":A" & (Sub_End + 3)).EntireRow.Insert
             Worksheets(WTB_Sheet).Range("A" & Sub_End + 3).Value = "<TOT_BLANK>"
             Worksheets(WTB_Sheet).Range("A" & Sub_End + 3).RowHeight = 10
         End If
@@ -369,7 +369,7 @@ ErrSub:
     FindRow WTB_Sheet, "A", Row_Cogs, Find_TotCogs
     If Row_Cogs > 0 Then
         For I = 1 To 2
-        Worksheets(WTB_Sheet).Range("A" & (Row_Cogs + 2) & ":" & Tmp_Col & (Row_Cogs + 2)).EntireRow.Insert
+        Worksheets(WTB_Sheet).Range("A" & (Row_Cogs + 2) & ":A" & (Row_Cogs + 2)).EntireRow.Insert
         If I = 2 Then
             Worksheets(WTB_Sheet).Range("A" & (Row_Cogs + 2)).Value = Find_TotGrossProfit
             Worksheets(WTB_Sheet).Range(Col_Ltr_TB(1) & (Row_Cogs + 2)).Value = "GROSS PROFIT"
@@ -419,10 +419,10 @@ ErrSub:
         End If
     End If  ' Row_End01 >= Row_End02
     If Row_Beg <> 0 And Row_End <> 0 Then
-        ActiveSheet.Range("A" & (Row_End + 1) & ":" & Tmp_Col & (Row_End + 1)).EntireRow.Insert
+        ActiveSheet.Range("A" & (Row_End + 1) & ":A" & (Row_End + 1)).EntireRow.Insert
         Worksheets(WTB_Sheet).Range("A" & (Row_End + 1)).Value = "<TOT_BLANK>"
         Worksheets(WTB_Sheet).Range("A" & (Row_End + 1)).RowHeight = 10
-        ActiveSheet.Range("A" & (Row_End + 2) & ":" & Tmp_Col & (Row_End + 2)).EntireRow.Insert
+        ActiveSheet.Range("A" & (Row_End + 2) & ":A" & (Row_End + 2)).EntireRow.Insert
         Worksheets(WTB_Sheet).Range("A" & (Row_End + 2)).RowHeight = 20
         Worksheets(WTB_Sheet).Range("A" & (Row_End + 2)).Value = "<TOT_SUB><LIABILITIES_EQUITY>"
         Worksheets(WTB_Sheet).Range(Col_Ltr_TB(1) & (Row_End + 2)).Value = "TOTAL LIABILITIES AND EQUITY"
@@ -498,7 +498,7 @@ ErrSub:
     ' Current Year Earnings
     FindRow WTB_Sheet, "A", I, "<TOT_SUB><EQUITY>"
     I = I - 1
-    ActiveSheet.Range("A" & I & ":" & Tmp_Col & I).EntireRow.Insert
+    ActiveSheet.Range("A" & I & ":A" & I).EntireRow.Insert
     Tmp1_I = Tmp1_I + 1 ' compensate INSERT
     Worksheets(WTB_Sheet).Range("A" & I).Value = "<TOT><C_Y_E>"
     Worksheets(WTB_Sheet).Range(Col_Ltr_TB(1) & I).Value = "Current Year Earnings"
@@ -599,7 +599,7 @@ ErrSub:
 
         subtotalDescr = ActiveSheet.Range("D" & ActiveCell.Row).Value
         If subtotalDescr = "" Then subtotalDescr = ActiveSheet.Range("D" & ActiveCell.Row - 1).Value
-        ActiveSheet.Range("A" & ActiveCell.Row & ":" & Tmp_Col & "Activecell.row").EntireRow.Insert
+        ActiveSheet.Range("A" & ActiveCell.Row & ":A" & Activecell.row).EntireRow.Insert
         ActiveSheet.Range("N" & ActiveCell.Row).Formula2 = "=IF(ISERROR(FIND(""="",OFFSET(INDIRECT(ADDRESS(ROW(), COLUMN())),0,-1),1)),"""",SUMIF($M:$M,SUBSTITUTE(OFFSET(INDIRECT(ADDRESS(ROW(), COLUMN())),0,-1),""="",""""),$L:$L) + OFFSET(INDIRECT(ADDRESS(ROW(), COLUMN())),0,-2))"
         ActiveSheet.Range("D" & ActiveCell.Row).Value = subtotalDescr
         ActiveSheet.Protect DrawingObjects:=False, Contents:=True, Scenarios:=True _
@@ -612,7 +612,7 @@ ErrSub:
         FindColNumLtr WTB_Sheet, 1, I, Tmp_Col, "<END_DEL>"
 
         ActiveSheet.Unprotect
-        ActiveSheet.Range("A" & ActiveCell.Row & ":" & Tmp_Col & "Activecell.row").EntireRow.Insert
+        ActiveSheet.Range("A" & ActiveCell.Row & ":A" & Activecell.row).EntireRow.delete
         ActiveSheet.Protect DrawingObjects:=False, Contents:=True, Scenarios:=True _
             , AllowFormattingCells:=True, AllowFormattingColumns:=True, _
             AllowFormattingRows:=True, AllowInsertingHyperlinks:=True
