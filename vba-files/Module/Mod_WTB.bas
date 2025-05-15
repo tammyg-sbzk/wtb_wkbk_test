@@ -4,6 +4,11 @@ Attribute VB_Name = "Mod_WTB"
 ' WTB_Subtotal_Del
 ' WTB_Subtotal_Refresh
 '-------------
+'-------------
+' WTB_Reconcile
+' WTB_Subtotal_Del
+' WTB_Subtotal_Refresh
+'-------------
 Function WTB_Reconcile()
     Const VBA_Name As String = "WTB_Reconcile"
     On Error GoTo ErrSub
@@ -34,7 +39,7 @@ Function WTB_Reconcile()
     
     FindLastRow T_Sheet, Tmp1_I
     If Tmp1_I > 0 Then
-        Worksheets(T_Sheet).Range("A1:" & Tmp_Col & Tmp1_I).Delete Shift:=xlUp
+        Worksheets(T_Sheet).Range("A1:" & Tmp_Col & Tmp1_I).delete Shift:=xlUp
     End If  ' Purge T_Sheet
     BS_Sheet = "NOF"
     PL_Sheet = "NOF"
@@ -225,12 +230,12 @@ ErrSub:
     If WTB_Beg > 0 And WTB_End > WTB_Beg Then
         FindLastRow Notes_Sheet, I
         If I > 0 Then
-            Worksheets(Notes_Sheet).Range("A1:A" & I).EntireRow.Delete
+            Worksheets(Notes_Sheet).Range("A1:A" & I).EntireRow.delete
         End If  ' Purge Notes_Sheet
         Worksheets(WTB_Sheet).Range(Tmp1_S & (WTB_Beg + 1) & ":" & Tmp2_S & WTB_End).Copy
         Worksheets(Notes_Sheet).Range("A1").PasteSpecial xlPasteValues
         Application.CutCopyMode = False
-        Worksheets(WTB_Sheet).Range("A" & (WTB_Beg + 1) & ":A" & WTB_End).EntireRow.Delete
+        Worksheets(WTB_Sheet).Range("A" & (WTB_Beg + 1) & ":A" & WTB_End).EntireRow.delete
     End If  ' Save Notes
     FindRow WTB_Sheet, "A", WTB_Beg, "<HDR>"
     WTB_Beg = WTB_Beg + 1
@@ -239,7 +244,7 @@ ErrSub:
     For I = WTB_End To WTB_Beg Step -1
         If Left(Worksheets(WTB_Sheet).Range("A" & I).Value, 4) = "<TOT" Then
             'Debug.Print ">" & I & "<>" & Worksheets(WTB_Sheet).Range("A" & I).Value & "<"
-            Worksheets(WTB_Sheet).Range("A" & I & ":A" & I).EntireRow.Delete
+            Worksheets(WTB_Sheet).Range("A" & I & ":A" & I).EntireRow.delete
         End If
     Next I
     
@@ -592,6 +597,7 @@ ErrSub:
     End Function
     
     Sub insertRow()
+        If activecell.row < 13 then exit sub
         ActiveSheet.Unprotect
         Dim subtotalDescr, Tmp_Col As String
 
@@ -599,9 +605,15 @@ ErrSub:
 
         subtotalDescr = ActiveSheet.Range("D" & ActiveCell.Row).Value
         If subtotalDescr = "" Then subtotalDescr = ActiveSheet.Range("D" & ActiveCell.Row - 1).Value
-        ActiveSheet.Range("A" & ActiveCell.Row & ":A" & Activecell.row).EntireRow.Insert
+        ActiveSheet.Range("A" & ActiveCell.Row & ":A" & ActiveCell.Row).EntireRow.Insert
         ActiveSheet.Range("N" & ActiveCell.Row).Formula2 = "=IF(ISERROR(FIND(""="",OFFSET(INDIRECT(ADDRESS(ROW(), COLUMN())),0,-1),1)),"""",SUMIF($M:$M,SUBSTITUTE(OFFSET(INDIRECT(ADDRESS(ROW(), COLUMN())),0,-1),""="",""""),$L:$L) + OFFSET(INDIRECT(ADDRESS(ROW(), COLUMN())),0,-2))"
         ActiveSheet.Range("D" & ActiveCell.Row).Value = subtotalDescr
+         With ActiveSheet.Range("E" & ActiveCell.Row).Validation
+            .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, _
+                Operator:=xlBetween, Formula1:="='Chart of Accounts'!A:A"
+            .ShowError = False
+            .IgnoreBlank = True
+        End With
         ActiveSheet.Protect DrawingObjects:=False, Contents:=True, Scenarios:=True _
             , AllowFormattingCells:=True, AllowFormattingColumns:=True, _
             AllowFormattingRows:=True, AllowInsertingHyperlinks:=True
@@ -609,10 +621,13 @@ ErrSub:
     
     Sub deleteRow()
         Dim Tmp_Col As String
+        
+        If activecell.row < 13 then exit sub
+
         FindColNumLtr WTB_Sheet, 1, I, Tmp_Col, "<END_DEL>"
 
         ActiveSheet.Unprotect
-        ActiveSheet.Range("A" & ActiveCell.Row & ":A" & Activecell.row).EntireRow.delete
+        ActiveSheet.Range("A" & ActiveCell.Row & ":A" & ActiveCell.Row).EntireRow.delete
         ActiveSheet.Protect DrawingObjects:=False, Contents:=True, Scenarios:=True _
             , AllowFormattingCells:=True, AllowFormattingColumns:=True, _
             AllowFormattingRows:=True, AllowInsertingHyperlinks:=True
