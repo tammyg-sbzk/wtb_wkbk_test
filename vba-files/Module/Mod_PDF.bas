@@ -11,7 +11,6 @@ Attribute VB_Name = "Mod_PDF"
 
 Function PDF_ALL()
 Const VBA_Name As String = "PDF_ALL"
-Debug.Print "VBA_Name>" & VBA_Name & "<"
 Dim GL_Sheet, BS_Sheet, PL_Sheet, WTB_Sheet, Msg01 As String
 Dim Tmp1_I As Integer
 
@@ -63,7 +62,6 @@ End Function
 
 Function PDF_AJE()
 Const VBA_Name As String = "PDF_AJE"
-Debug.Print "VBA_Name >" & VBA_Name & "<"
 Dim Act_Sheet, Tmp_Rng, Tmp1_S, Tmp2_S, Hdr_Repeat As String
 Dim Tmp1_I, Tmp2_I As Integer
 
@@ -75,7 +73,6 @@ Hdr_Repeat = Worksheets(Ctl_Sheet).Range(Tmp1_S & Tmp1_I).Value
 
 Act_Sheet = ActiveSheet.Name
 FindColNumLtr Act_Sheet, 1, Tmp1_I, Tmp1_S, "<COL_01>"
-'Tmp1_S = "D"
 FindRow Act_Sheet, "A", Tmp1_I, "<HDR>"
 Tmp1_I = Tmp1_I - 1
 FindLastColumn Act_Sheet, Tmp2_I
@@ -83,13 +80,11 @@ NumToLtr Tmp2_I, Tmp2_S
 FindLastRow Act_Sheet, Tmp2_I
 Tmp2_I = Tmp2_I + 1
 Tmp_Rng = Tmp1_S & Tmp1_I & ":" & Tmp2_S & Tmp2_I
-Debug.Print "Tmp_Rng>" & Tmp_Rng & "<"
 PDF_Print Tmp_Rng, Hdr_Repeat
 End Function
 
 Function PDF_WTB()
 Const VBA_Name As String = "PDF_WTB"
-Debug.Print "VBA_Name >" & VBA_Name & "<"
 Dim Act_Sheet, Tmp_Rng, Tmp1_S, Tmp2_S, Hdr_Repeat As String
 Dim Tmp1_I, Tmp2_I As Integer
 
@@ -101,7 +96,6 @@ Hdr_Repeat = Worksheets(Ctl_Sheet).Range(Tmp1_S & Tmp1_I).Value
 
 Act_Sheet = ActiveSheet.Name
 FindColNumLtr Act_Sheet, 1, Tmp1_I, Tmp1_S, "<ACCT>"
-'Tmp1_S = "D"
 FindRow Act_Sheet, "A", Tmp1_I, "<HDR>"
 Tmp1_I = Tmp1_I - 1
 FindLastColumn Act_Sheet, Tmp2_I
@@ -109,13 +103,11 @@ NumToLtr Tmp2_I, Tmp2_S
 FindLastRow Act_Sheet, Tmp2_I
 Tmp2_I = Tmp2_I + 1
 Tmp_Rng = Tmp1_S & Tmp1_I & ":" & Tmp2_S & Tmp2_I
-Debug.Print "Tmp_Rng>" & Tmp_Rng & "<"
 PDF_Print Tmp_Rng, Hdr_Repeat
 End Function
 
 Function PDF_GL()
 Const VBA_Name As String = "PDF_GL"
-Debug.Print "VBA_Name >" & VBA_Name & "<"
 Dim Act_Sheet, Tmp_Rng, Tmp1_S, Tmp2_S, Hdr_Repeat As String
 Dim Tmp1_I, Tmp2_I As Integer
 
@@ -132,13 +124,11 @@ Tmp1_I = Tmp1_I - 1
 FindColNumLtr Act_Sheet, 1, Tmp2_I, Tmp2_S, "<NOTES>"
 FindLastRow Act_Sheet, Tmp2_I
 Tmp_Rng = Tmp1_S & Tmp1_I & ":" & Tmp2_S & Tmp2_I
-Debug.Print "Tmp_Rng>" & Tmp_Rng & "<"
 PDF_Print Tmp_Rng, Hdr_Repeat
 End Function
 
 Function PDF_BS()
 Const VBA_Name As String = "PDF_BS"
-Debug.Print "VBA_Name >" & VBA_Name & "<"
 Dim Act_Sheet, Tmp_Rng, Tmp1_S, Tmp2_S, Hdr_Repeat As String
 Dim Tmp1_I, Tmp2_I As Integer
 
@@ -151,18 +141,15 @@ Hdr_Repeat = Worksheets(Ctl_Sheet).Range(Tmp1_S & Tmp1_I).Value
 Act_Sheet = ActiveSheet.Name
 FindColNumLtr Act_Sheet, 1, Tmp1_I, Tmp1_S, "<COL_01>"
 FindRow Act_Sheet, "A", Tmp1_I, "<HDR-1>"
-'Tmp1_I = Tmp1_I - 1
 FindLastColumn Act_Sheet, Tmp2_I
 NumToLtr Tmp2_I, Tmp2_S
 FindLastRow Act_Sheet, Tmp2_I
 Tmp_Rng = Tmp1_S & Tmp1_I & ":" & Tmp2_S & Tmp2_I
-Debug.Print "Tmp_Rng>" & Tmp_Rng & "<"
 PDF_Print Tmp_Rng, Hdr_Sheet
 End Function
 
 Function PDF_PL()
 Const VBA_Name As String = "PDF_PL"
-Debug.Print "VBA_Name >" & VBA_Name & "<"
 Dim Act_Sheet, Tmp_Rng, Tmp1_S, Tmp2_S, Hdr_Repeat As String
 Dim Tmp1_I, Tmp2_I As Integer
 
@@ -175,12 +162,10 @@ Hdr_Repeat = Worksheets(Ctl_Sheet).Range(Tmp1_S & Tmp1_I).Value
 Act_Sheet = ActiveSheet.Name
 FindColNumLtr Act_Sheet, 1, Tmp1_I, Tmp1_S, "<COL_01>"
 FindRow Act_Sheet, "A", Tmp1_I, "<HDR-1>"
-'Tmp1_I = Tmp1_I - 1
 FindLastColumn Act_Sheet, Tmp2_I
 NumToLtr Tmp2_I, Tmp2_S
 FindLastRow Act_Sheet, Tmp2_I
 Tmp_Rng = Tmp1_S & Tmp1_I & ":" & Tmp2_S & Tmp2_I
-Debug.Print "Tmp_Rng>" & Tmp_Rng & "<"
 Worksheets(Act_Sheet).PageSetup.PrintTitleRows = TopRepeat
 PDF_Print Tmp_Rng, Hdr_Repeat
 End Function
@@ -191,7 +176,6 @@ Dim Tmp_Str, Tmp_Hdr, Tmp_Name, Tmp_YrEnd, W_Sheet, WB_Path As String
 Dim TmpRng As Range
 
 Const Logo_Path As String = "F:\1NET\2Logos & Branding\SBZK_Logo_CMYK_2-Transparent.png"
-Debug.Print "Logo_Path>" & Logo_Path & "<"
 
 Tmp_Name = Application.Evaluate("Name_Client")
 Tmp_YrEnd = Application.Evaluate("Yr_End")
@@ -212,12 +196,10 @@ With Application.ActiveSheet.PageSetup.LeftHeaderPicture
 End With
 
 ActiveSheet.PageSetup.LeftHeader = "&G"
-'Application.ActiveSheet.PageSetup.CenterHeader = "&""Century Gothic,Bold""&16" & Chr(10) & W_Sheet & Chr(10) & Tmp_Name & Chr(10) & Tmp_YrEnd
 Application.ActiveSheet.PageSetup.RightHeader = "&""Century Gothic,Bold""&16" & "Page " & "&P" & " of " & "&N"
 Set TmpRng = Range(TmpPDF)
 Worksheets(W_Sheet).PageSetup.PrintArea = TmpPDF
 Worksheets(W_Sheet).PageSetup.PrintTitleRows = Tmp_Repeat
-'TmpRng.ExportAsFixedFormat Type:=xlTypePDF, Filename:=WB_Path, Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas:=True, OpenAfterPublish:=True
 TmpRng.ExportAsFixedFormat Type:=xlTypePDF, Filename:=WB_Path, Quality:=xlQualityStandard, IncludeDocProperties:=True, IgnorePrintAreas:=True, OpenAfterPublish:=True
 
 ExitRoutine:

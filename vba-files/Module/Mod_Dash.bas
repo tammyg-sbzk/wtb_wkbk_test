@@ -6,7 +6,6 @@ Attribute VB_Name = "Mod_Dash"
 
 Function Obj_Hide()
 Const VBA_Name As String = "Prep_For_Tax"
-Debug.Print ">" & VBA_Name & "<"
 On Error GoTo ErrSub
 Dim D_Sheet, R_Sheet, WTB_Sheet, Ctl_Sheet As String
 
@@ -32,7 +31,6 @@ Next WkSheet
 
 If WTB_Sheet <> "NOF" And R_Sheet <> "NOF" And D_Sheet <> "NOF" And Ctl_Sheet <> "NOF" Then
     ' OK - Fall Thru
-    Debug.Print "Worksheets Found"
 Else
     Msg_01 = VBA_Name & Chr(13) & Chr(10)
     If Ctl_Sheet = "NOF" Then Msg_01 = Msg_01 & "Can NOT find the [CONTROL Sheet]" & Chr(13) & Chr(10)
@@ -54,7 +52,6 @@ Worksheets("Year-End Questions").Visible = False
 Worksheets("Profit and Loss Monthly").Visible = False
 
 ExitRoutine:
-Debug.Print "Complete>" & VBA_Name & "<"
 Exit Function
 
 ErrSub:
@@ -65,7 +62,6 @@ End Function
 
 Function Obj_HideCO()
 Const VBA_Name As String = "Prep_For_CO"
-Debug.Print ">" & VBA_Name & "<"
 On Error GoTo ErrSub
 Dim D_Sheet, R_Sheet, WTB_Sheet, Ctl_Sheet As String
 
@@ -91,7 +87,6 @@ Next WkSheet
 
 If WTB_Sheet <> "NOF" And R_Sheet <> "NOF" And D_Sheet <> "NOF" And Ctl_Sheet <> "NOF" Then
     ' OK - Fall Thru
-    Debug.Print "Worksheets Found"
 Else
     Msg_01 = VBA_Name & Chr(13) & Chr(10)
     If Ctl_Sheet = "NOF" Then Msg_01 = Msg_01 & "Can NOT find the [CONTROL Sheet]" & Chr(13) & Chr(10)
@@ -109,11 +104,8 @@ Worksheets(WTB_Sheet).Shapes(Btn_Del).Visible = False
 Worksheets(WTB_Sheet).Shapes(Btn_Rec).Visible = False
 Worksheets(R_Sheet).Visible = False
 Worksheets(D_Sheet).Visible = False
-'Worksheets("Year-End Questions").Visible = False
-'Worksheets("Profit and Loss Monthly").Visible = False
 
 ExitRoutine:
-Debug.Print "Complete>" & VBA_Name & "<"
 Exit Function
 
 ErrSub:
@@ -124,7 +116,6 @@ End Function
 
 Function Obj_UnHide()
 Const VBA_Name As String = "Prep_For_Tax"
-Debug.Print ">" & VBA_Name & "<"
 On Error GoTo ErrSub
 Dim D_Sheet, R_Sheet, WTB_Sheet, Ctl_Sheet As String
 
@@ -150,7 +141,6 @@ Next WkSheet
 
 If WTB_Sheet <> "NOF" And R_Sheet <> "NOF" And D_Sheet <> "NOF" And Ctl_Sheet <> "NOF" Then
     ' OK - Fall Thru
-    Debug.Print "Worksheets Found"
 Else
     Msg_01 = VBA_Name & Chr(13) & Chr(10)
     If R_Sheet = "NOF" Then Msg_01 = Msg_01 & "Can NOT find the [READ ME Sheet]" & Chr(13) & Chr(10)
@@ -172,7 +162,6 @@ Worksheets("Year-End Questions").Visible = True
 Worksheets("Profit and Loss Monthly").Visible = True
 
 ExitRoutine:
-Debug.Print "Complete>" & VBA_Name & "<"
 Exit Function
 
 ErrSub:

@@ -9,8 +9,6 @@ Attribute VB_Name = "Mod_Import"
 '----------
 Function Import_Raw(Raw_Sheet, Import_Type, Find_Hdr, OK_Cont)
 Const VBA_Name As String = "Import_Raw"
-Debug.Print "<" & VBA_Name & ">" & VBA_Name & "<"
-Debug.Print "Disp_Sheet>" & Disp_Sheet & "<"
 On Error GoTo ErrSub
 Dim Src_WrkBk As Workbook
 Dim Src_WrkSht, Target_Wrkbk As String
@@ -23,7 +21,6 @@ Dim RngFound As Range
 
 Const Tmp_Cell As String = "C1"
 Const Dollar_Chg_Hdr As String = "$ Change Calculated"
-Debug.Print "Raw_Sheet>" & Raw_Sheet & "<"
 Tmp1_I = MsgBox("Do you wish to IMPORT a " & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Current >" & Import_Type & "< download" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "This Will PURGE and Rebuild >" & Raw_Sheet & "<", vbQuestion + vbYesNo + vbDefaultButton2, "IMPORT " & Import_Type & " download")
 If Tmp1_I = 7 Then
     OK_Cont = 0
@@ -38,12 +35,9 @@ This_Drive = Left(This_Path, 2)
 ChDrive This_Drive
 ChDir This_Path
 This_Import = Application.GetOpenFilename(FileFilter:="MS-Excel Files (*.xlsx), *.xlsx", Title:="Browse .xlsx Files")
-'Debug.Print This_Import
 If This_Import = False Then
-    Debug.Print "No Import"
     OK_Cont = 0
 Else
- '   Debug.Print "Yes Import"
     Worksheets(Raw_Sheet).Visible = True
     FindColNumLtr Dash_Sheet, 1, Tmp1_I, Tmp1_S, "<COL_02>"
     FindRow Dash_Sheet, "A", Tmp1_I, "<IMP_PATH>"
@@ -56,7 +50,6 @@ Else
     Src_WrkSht = ActiveSheet.Name
     Src_BegRow = 0
     FindAnyWhere Src_WrkSht, Find_Hdr, Src_LastCol, Src_BegRow
-Debug.Print "<!!-02-!!>" & Disp_Sheet & "<COL_01>"
     If Src_BegRow = 0 Then
         ' Build Raw Sheet for 'Cheap' QB
         Calc_DlrChg = 1 ' $ Change Column NOF on Raw Import, must build on RAW sheet
@@ -77,7 +70,6 @@ Debug.Print "<!!-02-!!>" & Disp_Sheet & "<COL_01>"
     Src_Range = "A" & Src_BegRow & ":" & Src_LastCol & Src_LastRow
     ActiveSheet.Range(Src_Range).Copy
     Workbooks(Target_Wrkbk).Worksheets(Raw_Sheet).Range("A1").PasteSpecial xlPasteValues
-    Debug.Print "Target Raw Worksheet Activate>" & Raw_Sheet & "<"
     Workbooks(Target_Wrkbk).Worksheets(Raw_Sheet).Activate
     Application.CutCopyMode = False
     Src_WrkBk.Close SaveChanges:=False
@@ -101,8 +93,6 @@ Debug.Print "<!!-02-!!>" & Disp_Sheet & "<COL_01>"
                     ' Do nothing
                 Else
                     Tmp_Str = "=.Range(" & Col_Cur & Tmp_Row & ")-.Range(" & Col_Prev & Tmp_Row & ")"
-     '               Debug.Print "Tmp_Str >" & Tmp_Str & "<"
-                    '.Range(Col_Calc & Tmp_Row).Formula = "=.Range(" & Col_Cur & Tmp_Row & ")-.Range(" & Col_Prev & Tmp_Row & ")"
                     .Range(Col_Calc & Tmp_Row).Value = .Range(Col_Cur & Tmp_Row).Value - .Range(Col_Prev & Tmp_Row).Value
                 End If
             Next Tmp_Row
@@ -120,7 +110,6 @@ End If  ' Tmp1_I = No
 
 ExitRoutine:
 Worksheets(Raw_Sheet).Visible = False
-Debug.Print "Complete>" & VBA_Name & "<"
 Exit Function
 
 ErrSub:
@@ -131,7 +120,6 @@ End Function
 
 Function Import_PL()
 Const VBA_Name As String = "Import_PL"
-Debug.Print ">" & VBA_Name & "<"
 On Error GoTo ErrSub
 
 Dim Time_Beg, Time_End
@@ -156,7 +144,6 @@ If Raw_Sheet = "NOF" Then
     Tmp1_I = MsgBox(VBA_Name & " Can NOT find a Raw Import Worksheet with the CODE NAME >" & Use_Sheet & "<" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Please make a note of this message and contact Program Development", vbExclamation, "RAW Import Worksheet Not Found")
     GoTo ExitRoutine
 End If
-Debug.Print "Name>" & Raw_Sheet & "<"
 FindColNumLtr This_Sheet, 1, Tmp_Row, Tmp_Col, "<COL_03>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_PL>"
 Worksheets(This_Sheet).Range(Tmp_Col & (Tmp_Row - 1)).Value = Now()
@@ -166,10 +153,7 @@ If OK_Cont = 0 Then
     GoTo ExitRoutine
 End If
 FindColNumLtr Raw_Sheet, 1, I, Tmp_Col, Find_Hdr
-Debug.Print VBA_Name & ">" & Raw_Sheet & "<Find>" & Find_Hdr & "<I>" & I & "<Tmp_Col>" & Tmp_Col & "<"
-'Worksheets(Raw_Sheet).Cells(1, (I - 2)).Value = "<DESCRIPTION>"
 FindAnyWhere Fmt_Sheet, Find_Hdr, Tmp4_S, Tmp4_I
-Debug.Print "Change Found At>" & Tmp4_S & Tmp4_I & "<"
 Worksheets(Fmt_Sheet).Columns(Tmp4_S).Delete
 FindRow Fmt_Sheet, "A", Tmp_Row, "<HDR-1>"
 Tmp_Row = Tmp_Row + 1
@@ -189,7 +173,6 @@ FindAnyWhere Fmt_Sheet, Find_Hdr, Tmp_Col, Tmp_Row
 Src_Str = Tmp_Row & ":" & Tmp_Col & Tmp_Row
 FindColNumLtr Fmt_Sheet, 1, I, Tmp_Col, "<COL_01>"
 Src_Str = Tmp_Col & Src_Str
-Debug.Print "Header>" & Src_Str & "<"
 With Worksheets(Fmt_Sheet).Range(Src_Str)
     .Interior.Color = RGB(144, 161, 105)
     .Font.Color = RGB(255, 255, 255)
@@ -197,11 +180,6 @@ With Worksheets(Fmt_Sheet).Range(Src_Str)
     .HorizontalAlignment = xlCenter
     .BorderAround xlContinuous
 End With
-If Trim(Worksheets(Raw_Sheet).Range("A1").Value) > "" Then
-    ' ONLINE - Col(A) Contains Data - Do Nothing
-Else
-    ' LOCAL - Col(A) is Blank - Delete Col(A)
-End If
 ' Format Headers & Footers
 FindColNumLtr Fmt_Sheet, 1, Tmp1_I, Tmp1_S, "<COL_01>"
 FindAnyWhere Fmt_Sheet, Find_Hdr, Tmp_Col, Tmp_Row
@@ -245,7 +223,6 @@ With Worksheets(Fmt_Sheet).Columns(Tmp3_S & ":" & Tmp4_S)
     .NumberFormat = "#,##0.00_);(#,##0.00);"
 End With
 FindAnyWhere Fmt_Sheet, "Net Income", Tmp_Col, Tmp_Row
-Debug.Print "Net Income Last Row>" & Tmp_Col & Tmp_Row & "<"
 With Worksheets(Fmt_Sheet).Range(Tmp1_S & Tmp_Row & ":" & Tmp4_S & Tmp_Row)
     .Font.Bold = True
     .Borders(xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
@@ -274,7 +251,6 @@ End Function
 
 Function Import_BS()
 Const VBA_Name As String = "Import_BS"
-Debug.Print ">" & VBA_Name & "<"
 On Error GoTo ErrSub
 
 Dim Time_Beg, Time_End
@@ -299,22 +275,16 @@ If Raw_Sheet = "NOF" Then
     Tmp1_I = MsgBox(VBA_Name & " Can NOT find a Raw Import Worksheet with the CODE NAME >" & Use_Sheet & "<" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Please make a note of this message and contact Program Development", vbExclamation, "RAW Import Worksheet Not Found")
     GoTo ExitRoutine
 End If
-Debug.Print "Name>" & Raw_Sheet & "<"
 FindColNumLtr This_Sheet, 1, Tmp_Row, Tmp_Col, "<COL_03>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_BS>"
 Worksheets(This_Sheet).Range(Tmp_Col & (Tmp_Row - 1)).Value = Now()
-Debug.Print "Call Import_Raw >" & OK_Cont & "<"
 Import_Raw Raw_Sheet, Desc_Sheet, Find_Hdr, OK_Cont
-Debug.Print "Return Import_Raw >" & OK_Cont & "<"
 If OK_Cont = 0 Then
     Tmp1_I = MsgBox("Import has been Canceled", vbInformation, "IMPORT CANCELED")
     GoTo ExitRoutine
 End If
 FindColNumLtr Raw_Sheet, 1, I, Tmp_Col, Find_Hdr
-Debug.Print VBA_Name & ">" & Raw_Sheet & "<Find>" & Find_Hdr & "<I>" & I & "<Tmp_Col>" & Tmp_Col & "<"
-'Worksheets(Raw_Sheet).Cells(1, (I - 2)).Value = "<DESCRIPTION>"
 FindAnyWhere Fmt_Sheet, Find_Hdr, Tmp4_S, Tmp4_I
-Debug.Print "Change Found At>" & Tmp4_S & Tmp4_I & "<"
 Worksheets(Fmt_Sheet).Columns(Tmp4_S).Delete
 FindRow Fmt_Sheet, "A", Tmp_Row, "<HDR-1>"
 Tmp_Row = Tmp_Row + 1
@@ -334,7 +304,6 @@ FindAnyWhere Fmt_Sheet, Find_Hdr, Tmp_Col, Tmp_Row
 Src_Str = Tmp_Row & ":" & Tmp_Col & Tmp_Row
 FindColNumLtr Fmt_Sheet, 1, I, Tmp_Col, "<COL_01>"
 Src_Str = Tmp_Col & Src_Str
-Debug.Print "Header>" & Src_Str & "<"
 With Worksheets(Fmt_Sheet).Range(Src_Str)
     .Interior.Color = RGB(144, 161, 105)
     .Font.Color = RGB(255, 255, 255)
@@ -342,11 +311,6 @@ With Worksheets(Fmt_Sheet).Range(Src_Str)
     .HorizontalAlignment = xlCenter
     .BorderAround xlContinuous
 End With
-If Trim(Worksheets(Raw_Sheet).Range("A1").Value) > "" Then
-    ' ONLINE - Col(A) Contains Data - Do Nothing
-Else
-    ' LOCAL - Col(A) is Blank - Delete Col(A)
-End If
 ' Format Headers & Footers
 FindColNumLtr Fmt_Sheet, 1, Tmp1_I, Tmp1_S, "<COL_01>"
 FindAnyWhere Fmt_Sheet, Find_Hdr, Tmp_Col, Tmp_Row
@@ -393,7 +357,6 @@ FindAnyWhere Fmt_Sheet, "TOTAL LIABILITIES & EQUITY", Tmp_Col, Tmp_Row
 If Tmp_Row = 0 Then
 FindAnyWhere Fmt_Sheet, "TOTAL LIABILITIES AND EQUITY", Tmp_Col, Tmp_Row
 End If
-Debug.Print "Total Liabilities and Equity Last Row>" & Tmp_Col & Tmp_Row & "<"
 With Worksheets(Fmt_Sheet).Range(Tmp1_S & Tmp_Row & ":" & Tmp4_S & Tmp_Row)
     .Font.Bold = True
     .Borders(xlEdgeTop).LineStyle = XlLineStyle.xlContinuous
@@ -461,7 +424,6 @@ Else
     Tmp1_I = MsgBox(VBA_Name & " Can NOT find a Raw Import Worksheet with the CODE NAME >" & Use_Sheet & "<" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Please make a note of this message and contact Program Development", vbExclamation, "RAW Import Worksheet Not Found")
     GoTo ExitRoutine
 End If
-Debug.Print VBA_Name & ">" & "<RAW>" & Raw_Sheet & "<WTB>" & WTB_Sheet & "<"
 FindColNumLtr This_Sheet, 1, Tmp_Row, Tmp_Col, "<COL_03>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_TB>"
 Worksheets(This_Sheet).Range(Tmp_Col & (Tmp_Row - 1)).Value = Now()
@@ -471,7 +433,6 @@ If OK_Cont = 0 Then
     GoTo ExitRoutine
 End If
 FindColNumLtr Raw_Sheet, 1, I, Tmp_Col, Find_Hdr
-Debug.Print VBA_Name & ">" & Raw_Sheet & "<Find>" & Find_Hdr & "<I>" & I & "<Tmp_Col>" & Tmp_Col & "<"
 Worksheets(Raw_Sheet).Cells(1, (I - 2)).Value = "<DESCRIPTION>"
 If Trim(Worksheets(Raw_Sheet).Range("A1").Value) > "" Then
     ' ONLINE - Col(A) Contains Data - Do Nothing
@@ -482,14 +443,12 @@ Else
     FindLastRow Raw_Sheet, Tmp_Row
     Worksheets(Raw_Sheet).Range("A" & Tmp_Row).Value = "<TOTAL>"
 End If
-Debug.Print "Purge>" & WTB_Sheet; "<"
 FindRow WTB_Sheet, "A", WTB_Row, "<HDR>"
 WTB_Row = WTB_Row + 1
 FindLastRow WTB_Sheet, Tmp_Row
 FindColNumLtr WTB_Sheet, 1, I, Tmp_Col, "<END_DEL>"
 Worksheets(WTB_Sheet).Unprotect
 If Tmp_Row >= WTB_Row Then Worksheets(WTB_Sheet).Range("A" & WTB_Row & ":" & Tmp_Col & Tmp_Row).Delete Shift:=xlUp
-Debug.Print "Build WTB Arrays"
 For I = 1 To 5
     FindColNumLtr WTB_Sheet, 1, Tmp_Row, Col_WTB(I), Find_WTB(I)
 Next I
@@ -538,7 +497,6 @@ End Function
 
 Function Import_GL()
 Const VBA_Name As String = "Import_GL"
-Debug.Print "VBA_Name>" & VBA_Name & "<"
 'On Error GoTo ErrSub
 Dim Time_Beg, Time_End
 Dim WkSheet As Worksheet
@@ -561,7 +519,6 @@ If Raw_Sheet = "NOF" Then
     Tmp1_I = MsgBox(VBA_Name & " Can NOT find a Raw Import Worksheet with the CODE NAME >" & Use_Sheet & "<" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Please make a note of this message and contact Program Development", vbExclamation, "RAW Import Worksheet Not Found")
     GoTo ExitRoutine
 End If
-Debug.Print VBA_Name & ">" & "<Raw_Sheet>" & Raw_Sheet & "<"
 FindColNumLtr This_Sheet, 1, Tmp_Row, Tmp_Col, "<COL_03>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_GL>"
 Worksheets(This_Sheet).Range(Tmp_Col & (Tmp_Row - 1)).Value = Now()
@@ -572,7 +529,6 @@ If OK_Cont = 0 Then
 End If
 FindRow Raw_Sheet, "A", Tmp_Row, "TOTAL"
 FindLastRowOnSheet Raw_Sheet, I
-Debug.Print "Raw_Sheet>" & Raw_Sheet & "<TOTAL>" & Tmp_Row & "<LastRow>" & I & "<"
 If Tmp_Row = I Then
     ' LOCAL - Delete Col(A)
     Worksheets(Raw_Sheet).Range("A1").EntireColumn.Delete
@@ -598,7 +554,6 @@ Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value = This_Path
 ' Automatically Rebuild GL
 Worksheets(GL_Sheet).Activate
 Rebuild_GL
-Debug.Print "!!! Dow - This_Sheet>" & This_Sheet & "<"
 Worksheets(This_Sheet).Activate
 
 ExitRoutine:
@@ -612,7 +567,6 @@ End Function
 
 Sub Import_MonthlyPL()
 Const VBA_Name As String = "Import_MonthlyPL"
-Debug.Print "VBA_Name>" & VBA_Name & "<"
 On Error GoTo ErrSub
 Dim Time_Beg, Time_End
 Dim WkSheet As Worksheet
@@ -637,7 +591,6 @@ OK_Cont = 1
 Raw_Sheet = "NOF"
 For Each WkSheet In ThisWorkbook.Worksheets
     If WkSheet.CodeName = Use_Raw Then Raw_Sheet = WkSheet.Name
-    'If WkSheet.CodeName = Use_GL Then GL_Sheet = WkSheet.Name
 Next WkSheet
 If Raw_Sheet = "NOF" Then
     Tmp1_I = MsgBox(VBA_Name & " Can NOT find a Raw Import Worksheet with the CODE NAME >" & Use_Sheet & "<" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Please make a note of this message and contact Program Development", vbExclamation, "RAW Import Worksheet Not Found")
@@ -647,7 +600,6 @@ FindColNumLtr This_Sheet, 1, Tmp_Row, Tmp_Col, "<COL_03>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_MONTHLYPL>"
 Worksheets(This_Sheet).Range(Tmp_Col & (Tmp_Row - 1)).Value = Now()
 Set wsh = ThisWorkbook.Worksheets(Raw_Sheet)
-Debug.Print "Raw_Sheet>" & Raw_Sheet & "<"
 Tmp1_I = MsgBox("Do you wish to IMPORT a " & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Current >" & Import_Type & "< download" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "This Will PURGE and Rebuild >" & Raw_Sheet & "<", vbQuestion + vbYesNo + vbDefaultButton2, "IMPORT " & Import_Type & " download")
 If Tmp1_I = 7 Then
     OK_Cont = 0
@@ -659,7 +611,6 @@ Dash_Sheet = This_Sheet
 This_Path = Application.ActiveWorkbook.Path
 This_Drive = Left(This_Path, 2)
 
-'Dash_Sheet = "Dashboard"
 ChDrive This_Drive
 ChDir This_Path
 This_Import = Application.GetOpenFilename(FileFilter:="MS-Excel Files (*.xlsx), *.xlsx", Title:="Browse .xlsx Files")
@@ -669,10 +620,15 @@ FindRow Dash_Sheet, "A", Tmp1_I, "<IMP_PATH>"
 Worksheets(Dash_Sheet).Range(Tmp1_S & Tmp1_I).Value = This_Import
 Target_Wrkbk = ActiveWorkbook.Name
 Set Wbp1 = Workbooks.Open(This_Import)
-wsh.Range("A1:AE1000").Value = Wbp1.Sheets(1).Range("A1:AE1000").Value
+Wbp1.Sheets(1).Range("A1:AE1000").UnMerge
+Wbp1.Sheets(1).Range("A1:AE1000").Copy
+wsh.Range("A1:AE1000").PasteSpecial Paste:=xlPasteFormats
+wsh.Range("A1:AE1000").PasteSpecial Paste:=xlPasteValues
 wsh.Columns("A:AE").AutoFit
+Application.DisplayAlerts = False
 Wbp1.Close SaveChanges:=False
 Application.ScreenUpdating = True
+Application.DisplayAlerts = True
 End If
 FindColNumLtr This_Sheet, 1, I, Tmp_Col, "<COL_03>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_MONTHLYPL>"
@@ -680,8 +636,6 @@ Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value = Now()
 FindColNumLtr This_Sheet, 1, I, Tmp_Col, "<COL_02>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_PATH>"
 This_Path = Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value
-'FindRow This_Sheet, "A", Tmp_Row, "<REBUILD_MONTHLYPL>"
-'Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value = "Need to Rebuild GL from GL Sheet"
 FindColNumLtr This_Sheet, 1, I, Tmp_Col, "<COL_03>"
 Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value = ""
 FindColNumLtr This_Sheet, 1, I, Tmp_Col, "<COL_04>"
@@ -698,7 +652,6 @@ End Sub
 
 Sub Import_ChartOfAccounts()
 Const VBA_Name As String = "Import_ChartOfAccounts"
-Debug.Print "VBA_Name>" & VBA_Name & "<"
 On Error GoTo ErrSub
 Dim Time_Beg, Time_End
 Dim WkSheet As Worksheet
@@ -723,7 +676,6 @@ OK_Cont = 1
 Raw_Sheet = "NOF"
 For Each WkSheet In ThisWorkbook.Worksheets
     If WkSheet.CodeName = Use_Raw Then Raw_Sheet = WkSheet.Name
-    'If WkSheet.CodeName = Use_GL Then GL_Sheet = WkSheet.Name
 Next WkSheet
 If Raw_Sheet = "NOF" Then
     Tmp1_I = MsgBox(VBA_Name & " Can NOT find a Raw Import Worksheet with the CODE NAME >" & Use_Sheet & "<" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Please make a note of this message and contact Program Development", vbExclamation, "RAW Import Worksheet Not Found")
@@ -733,7 +685,6 @@ FindColNumLtr This_Sheet, 1, Tmp_Row, Tmp_Col, "<COL_03>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_CHART>"
 Worksheets(This_Sheet).Range(Tmp_Col & (Tmp_Row - 1)).Value = Now()
 Set wsh = ThisWorkbook.Worksheets(Raw_Sheet)
-Debug.Print "Raw_Sheet>" & Raw_Sheet & "<"
 Tmp1_I = MsgBox("Do you wish to IMPORT a " & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Current >Chart of Accounts< download" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "This Will PURGE and Rebuild >" & Raw_Sheet & "<", vbQuestion + vbYesNo + vbDefaultButton2, "IMPORT " & Import_Type & " download")
 If Tmp1_I = 7 Then
     OK_Cont = 0
@@ -779,8 +730,6 @@ Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value = Now()
 FindColNumLtr This_Sheet, 1, I, Tmp_Col, "<COL_02>"
 FindRow This_Sheet, "A", Tmp_Row, "<IMP_PATH>"
 This_Path = Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value
-'FindRow This_Sheet, "A", Tmp_Row, "<REBUILD_MONTHLYPL>"
-'Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value = "Need to Rebuild GL from GL Sheet"
 FindColNumLtr This_Sheet, 1, I, Tmp_Col, "<COL_03>"
 Worksheets(This_Sheet).Range(Tmp_Col & Tmp_Row).Value = ""
 FindColNumLtr This_Sheet, 1, I, Tmp_Col, "<COL_04>"

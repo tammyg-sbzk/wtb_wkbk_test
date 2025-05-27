@@ -12,7 +12,6 @@ Attribute VB_Name = "Mod_WTB"
 Function WTB_Reconcile()
     Const VBA_Name As String = "WTB_Reconcile"
     On Error GoTo ErrSub
-    Debug.Print "Open >" & VBA_Name & "<Begin Color Formatting"
     Dim BS_Cnt, PL_Cnt, Ctl_Row, Ctl_Beg, Ctl_End, I, Tmp1_I, Tmp2_I, BS_BegRow, BS_EndRow, PL_BegRow, PL_EndRow As Integer
     Dim BS_Sheet, PL_Sheet, WTB_Sheet, BSdol_Col, PLdol_Col, Find_Ctl, Find_Lookup, Tmp1_S, Tmp2_S, Tmp_Col As String
     Dim Lookup_Sheet, Lookup_DolCol, Lookup_Flag, Lookup_Col As String
@@ -59,7 +58,6 @@ Function WTB_Reconcile()
     NumToLtr (I - 2), BSdol_Col
     Ctl_End = I - 3
     FindColNumLtr BS_Sheet, 1, Ctl_Beg, Tmp2_S, "<COL_01>"
-    Debug.Print "BS Range>" & Tmp2_S & (BS_BegRow + 1) & ":" & Tmp1_S & BS_EndRow & "<"
     Worksheets(BS_Sheet).Range(Tmp2_S & (BS_BegRow + 1) & ":" & Tmp1_S & BS_EndRow).Interior.Color = RGB(255, 255, 255)
     BS_Cnt = (Ctl_End - Ctl_Beg) + 1
     ReDim BS_Col(BS_Cnt)
@@ -76,7 +74,6 @@ Function WTB_Reconcile()
     NumToLtr (I - 2), PLdol_Col
     Ctl_End = I - 3
     FindColNumLtr PL_Sheet, 1, Ctl_Beg, Tmp2_S, "<COL_01>"
-    Debug.Print "PL Range>" & Tmp2_S & (PL_BegRow + 1) & ":" & Tmp1_S & PL_EndRow & "<"
     Worksheets(PL_Sheet).Range(Tmp2_S & (PL_BegRow + 1) & ":" & Tmp1_S & PL_EndRow).Interior.Color = RGB(255, 255, 255)
     PL_Cnt = (Ctl_End - Ctl_Beg) + 1
     ReDim PL_Col(PL_Cnt)
@@ -104,9 +101,7 @@ Function WTB_Reconcile()
         Worksheets(T_Sheet).Range("A" & Test_Row).Value = Find_Ctl
         FindRow WTB_Sheet, "A", WTB_Row, Find_Ctl
         If WTB_Row > 0 Then
-            'Debug.Print ">" & WTB_Sheet & "<Found>" & Find_Ctl & "<"
             Find_Lookup = Trim(Worksheets(C_Sheet).Range(CTL_Col(4) & Ctl_Row).Value)
-            'Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Interior.Color = RGB(255, 255, 255)
             Worksheets(T_Sheet).Range("B" & Test_Row).Value = Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Value
             If Worksheets(C_Sheet).Range(CTL_Col(5) & Ctl_Row).Value = Use_BS Then
                 Lookup_Sheet = BS_Sheet
@@ -123,57 +118,47 @@ Function WTB_Reconcile()
                 Lookup_BegRow = PL_BegRow
                 Lookup_EndRow = PL_EndRow
             End If  ' Lookup_Sheet
-        Lookup_Exit = 0    ' Not Found Yet
-        For I = 1 To Lookup_Cnt
-            If Lookup_Flag = "BS" Then
-                Lookup_Col = BS_Col(I)
-            Else
-                Lookup_Col = PL_Col(I)
-            End If
-            Debug.Print "Search>" & Lookup_Sheet & "<for>" & Find_Lookup & "<"
-            Tmp_EndRow = Lookup_EndRow
-            Do  ' Loop until Exit
-            Debug.Print "<In Col>" & Lookup_Col & "<Lookup_BegRow>" & Lookup_BegRow & "<Lookup_EndRow>" & Lookup_EndRow & "<"
-            FindRowReverse Lookup_Sheet, Lookup_Col, Lookup_BegRow, Tmp_EndRow, Lookup_Row, Find_Lookup
-            Debug.Print "Found Lookup_Row>" & Lookup_Row & "<"
-            If Lookup_Row > 0 Then
-                If Find_Lookup = Trim(Worksheets(Lookup_Sheet).Range(Lookup_Col & Lookup_Row).Value) Then
-                    Lookup_Exit = 1
-                    Exit Do
-                    ' Exit Next
+            Lookup_Exit = 0    ' Not Found Yet
+            For I = 1 To Lookup_Cnt
+                If Lookup_Flag = "BS" Then
+                    Lookup_Col = BS_Col(I)
                 Else
-                    Tmp_EndRow = Lookup_Row - 1
-                    Debug.Print "Loop Again for>" & Find_Lookup & "<No Match>" & Trim(Worksheets(Lookup_Sheet).Range(Lookup_Col & Lookup_Row).Value)
-                    Debug.Print "Lookup_Row>" & Lookup_Row & "<Lookup_EndRow>" & Lookup_EndRow & "<"
-                End If ' Find_Lookup
-            Else
-                ' NOF
-                Exit Do
-            End If ' Lookup_Row
-            If Lookup_EndRow <= Lookup_BegRow Then
-                Exit Do
-            End If ' Exit Loop
-            Loop
+                    Lookup_Col = PL_Col(I)
+                End If
+                Tmp_EndRow = Lookup_EndRow
+                Do  ' Loop until Exit
+                FindRowReverse Lookup_Sheet, Lookup_Col, Lookup_BegRow, Tmp_EndRow, Lookup_Row, Find_Lookup
+                If Lookup_Row > 0 Then
+                    If Find_Lookup = Trim(Worksheets(Lookup_Sheet).Range(Lookup_Col & Lookup_Row).Value) Then
+                        Lookup_Exit = 1
+                        Exit Do
+                        ' Exit Next
+                    Else
+                        Tmp_EndRow = Lookup_Row - 1
+                    End If ' Find_Lookup
+                Else
+                    ' NOF
+                    Exit Do
+                End If ' Lookup_Row
+                If Lookup_EndRow <= Lookup_BegRow Then
+                    Exit Do
+                End If ' Exit Loop
+                Loop
+                If Lookup_Exit = 1 And Lookup_Row > 0 Then
+                    Exit For
+                End If ' Found and Exit Next I
+            Next I
             If Lookup_Exit = 1 And Lookup_Row > 0 Then
-                Exit For
-            End If ' Found and Exit Next I
-        Next I
-        Debug.Print "Find_Lookup>" & Find_Lookup & "<Lookup_Exit>" & Lookup_Exit & "<Found At>" & Lookup_Col & Lookup_Row & "<"
-        If Lookup_Exit = 1 And Lookup_Row > 0 Then
-            Debug.Print "WTB>" & Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Value & "<"
-            Debug.Print ">" & Lookup_Sheet & "<>" & Worksheets(Lookup_Sheet).Range(Lookup_Col & Lookup_Row).Value & "<"
-            If Abs(Round(Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Value, 2)) = Abs(Round(Worksheets(Lookup_Sheet).Range(Lookup_DolCol & Lookup_Row).Value, 2)) Then
-                ' Format Green
-                Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Interior.Color = RGB(198, 224, 180)
-                Worksheets(Lookup_Sheet).Range(Lookup_DolCol & Lookup_Row).Interior.Color = RGB(198, 224, 180)
-            Else
-                ' Format Pink
-                Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Interior.Color = RGB(255, 197, 197)
-                Worksheets(Lookup_Sheet).Range(Lookup_DolCol & Lookup_Row).Interior.Color = RGB(255, 197, 197)
+                If Abs(Round(Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Value, 2)) = Abs(Round(Worksheets(Lookup_Sheet).Range(Lookup_DolCol & Lookup_Row).Value, 2)) Then
+                    ' Format Green
+                    Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Interior.Color = RGB(198, 224, 180)
+                    Worksheets(Lookup_Sheet).Range(Lookup_DolCol & Lookup_Row).Interior.Color = RGB(198, 224, 180)
+                Else
+                    ' Format Pink
+                    Worksheets(WTB_Sheet).Range(WTB_Col & WTB_Row).Interior.Color = RGB(255, 197, 197)
+                    Worksheets(Lookup_Sheet).Range(Lookup_DolCol & Lookup_Row).Interior.Color = RGB(255, 197, 197)
+                End If ' Color Format
             End If ' Color Format
-        End If ' Color Format
-        Else
-            Debug.Print ">" & WTB_Sheet & "<NOF>" & Find_Ctl & "<"
         End If ' WTB Found
     Next Ctl_Row
     
@@ -195,7 +180,6 @@ ErrSub:
     Function WTB_Subtotal_Del()
     Const VBA_Name As String = "WTB_Subtotal_Del"
     On Error GoTo ErrSub
-    Debug.Print "Open >" & VBA_Name & "<"
     Dim I, WTB_Beg, WTB_End As Integer
     Dim WTB_Sheet, Tmp1_S, Tmp_Col As String
     
@@ -243,7 +227,6 @@ ErrSub:
     
     For I = WTB_End To WTB_Beg Step -1
         If Left(Worksheets(WTB_Sheet).Range("A" & I).Value, 4) = "<TOT" Then
-            'Debug.Print ">" & I & "<>" & Worksheets(WTB_Sheet).Range("A" & I).Value & "<"
             Worksheets(WTB_Sheet).Range("A" & I & ":A" & I).EntireRow.delete
         End If
     Next I
@@ -268,7 +251,6 @@ ErrSub:
     Function WTB_Subtotal_Refresh()
     Const VBA_Name As String = "WTB_Subtotal_Refresh"
     On Error GoTo ErrSub
-    Debug.Print "Open >" & VBA_Name & "<"
     Dim I, Row_Beg, Row_Beg01, Row_Beg02, Row_Beg03, Row_End, Row_End01, Row_End02, Row_End03, SubTot_Beg, SubTot_End, Tmp1_I As Integer
     Dim Row_Cogs, Row_GrossProfit, Tmp_Col, Tmp1_Row, Tmp2_Row, Tmp3_Row As String
     Dim WTB_Sheet, Str_1, Str_2, Tmp1_S As String
@@ -398,11 +380,8 @@ ErrSub:
             Worksheets(WTB_Sheet).Range("A" & (Row_Cogs + 2)).Value = "<TOT_BLANK>"
         End If  ' Insert Gross Profit Rows
         Next I
-    Else
-        Debug.Print "!!!! No COGS = No GROSS PROFIT"
     End If  ' Row_Cogs
     ' Subtotal Liabilities & Equity
-    Debug.Print "Subtotal LIabilities and Equity"
     Row_Beg = 0
     Row_End = 0
     FindRow WTB_Sheet, "A", Row_Beg01, "<LIABILITIES>"
@@ -442,7 +421,6 @@ ErrSub:
         Worksheets(WTB_Sheet).Range(Col_Ltr_TB(7) & (Row_End + 2)).Borders(xlEdgeBottom).LineStyle = XlLineStyle.xlDouble
     End If  ' LIABILITES AND EQUITY
     ' Net Income Loss
-    Debug.Print "Net Income Loss"
     FindLastRow WTB_Sheet, Tmp1_I
     Tmp1_I = Tmp1_I + 1
     Str_1 = ""
@@ -460,7 +438,6 @@ ErrSub:
     Str1 = Str1 & Col_Ltr_TB(2) & I
     Str2 = Str2 & Col_Ltr_TB(7) & I
     End If  ' Income
-    Debug.Print "Income Str1>" & Str1 & "<"
     FindRow WTB_Sheet, "A", I, "<TOT_SUB><EXPENSES>"
     If I > 0 Then
         If Tmp1_I > 0 Then
@@ -471,7 +448,6 @@ ErrSub:
         Str1 = Str1 & Col_Ltr_TB(2) & I
         Str2 = Str2 & Col_Ltr_TB(7) & I
     End If  ' Expense
-    Debug.Print "Expense Str1>" & Str1 & "<"
     FindRow WTB_Sheet, "A", I, "<TOT_SUB><NET OTHER (INCOME)/EXPENSE>"
     If I > 0 Then
         If Tmp1_I > 0 Then
@@ -482,7 +458,6 @@ ErrSub:
         Str1 = Str1 & Col_Ltr_TB(2) & I
         Str2 = Str2 & Col_Ltr_TB(7) & I
     End If  ' Income
-    Debug.Print "Other Income/Expense>" & Str1 & "<"
     Str1 = "=" & Str1
     Str2 = "=" & Str2
     FindLastRow WTB_Sheet, Tmp1_I

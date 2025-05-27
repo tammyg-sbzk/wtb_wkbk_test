@@ -5,7 +5,6 @@ Attribute VB_Name = "Mod_GL"
 
 Function Rebuild_GL()
 Const VBA_Name As String = "Rebuild_GL"
-Debug.Print VBA_Name
 On Error GoTo ErrSub
 Dim GL_Sheet, Use_Sheet, QB_Type, Tmp1_S As String
 Dim Out_Row, I, Tmp1_I, Tmp2_I, Tmp3_I, Tmp4_I, Array_Cnt As Integer
@@ -38,10 +37,6 @@ If Raw_Sheet = "NOF" Then
     Tmp1_I = MsgBox(VBA_Name & " Can NOT find a Raw Import Worksheet with the CODE NAME >" & Use_Sheet & "<" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "Please make a note of this message and contact Program Development", vbExclamation, "RAW Import GL Worksheet Not Found")
     GoTo ExitRoutine
 End If
-'Tmp1_I = MsgBox("Do you wish to REBUILD " & Chr(13) & Chr(10) & Chr(13) & Chr(10) & ">" & GL_Sheet & "< from the >" & Raw_Sheet & "< download" & Chr(13) & Chr(10) & Chr(13) & Chr(10) & "This Will PURGE and Rebuild >" & GL_Sheet & "<", vbQuestion + vbYesNo + vbDefaultButton2, "REBUILD >" & GL_Sheet & "<")
-Debug.Print "Tmp1_I>" & Tmp1_I & "<"
-'Tmp1_I = 6
-'If Tmp1_I = 6 Then
 FindRow Ctl_Sheet, "A", Tmp1_I, "<GL_COL_BEG>"
 FindRow Ctl_Sheet, "A", Tmp2_I, "<GL_COL_END>"
 Tmp4_I = 0
@@ -67,10 +62,8 @@ Worksheets(GL_Sheet).Range(Tmp1_S & Out_Row).PasteSpecial xlPasteValues
 FindColNumLtr GL_Sheet, 1, Tmp1_I, Tmp1_S, Find_GL_Desc
 QB_Type = ""
 If Trim(Worksheets(Raw_Sheet).Range("B" & 1).Value) > "" Then
-    Debug.Print "Not Null = ONLINE"
     QB_Type = "ONLINE"
 Else
-    Debug.Print "Is Null = LOCAL"
     QB_Type = "LOCAL"
     Worksheets(Raw_Sheet).Range("B" & Tmp2_I & ":" & "B" & Tmp3_I).Copy
     Worksheets(GL_Sheet).Range(Tmp1_S & Out_Row).PasteSpecial xlPasteValues
@@ -111,9 +104,6 @@ Worksheets(D_Sheet).Range(Tmp1_S & Tmp1_I).Value = ""
 FindColNumLtr D_Sheet, 1, Tmp1_I, Tmp1_S, "<COL_03>"
 FindRow D_Sheet, "A", Tmp1_I, "<REBUILD_GL>"
 Worksheets(D_Sheet).Range(Tmp1_S & Tmp1_I).Value = "GL Has Been Rebuilt"
-'Else
-    ' Tmp1_I <> 6 = abort pgm
-'End If  ' Tmp1_I = 6 = run pgm
 ExitRoutine:
 Exit Function
 

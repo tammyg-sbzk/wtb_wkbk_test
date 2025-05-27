@@ -6,7 +6,6 @@ Attribute VB_Name = "Mod_Export"
 Function AJE_Prep()
 ' Make sure that AJE Insert Rows have an Account Desc
 Const VBA_Name As String = "AJE_Prep"
-Debug.Print ">" & VBA_Name & "<"
 On Error GoTo ErrSub
 Dim WTB_Sheet, WTB_Col01, WTB_Col02, WTB_Col03, Tmp1_S As String
 Dim I, WTB_Beg, WTB_End, WTB_Row, Tmp1_I
@@ -23,7 +22,6 @@ Next WkSheet
 
 If WTB_Sheet <> "NOF" Then
     ' OK - Fall Thru
-    Debug.Print "Worksheets Found"
 Else
     Msg_01 = VBA_Name & Chr(13) & Chr(10)
     If WTB_Sheet = "NOF" Then Msg_01 = Msg_01 & "Can NOT find the [WTB - Working Trial Balance Sheet]" & Chr(13) & Chr(10)
@@ -45,7 +43,6 @@ For WTB_Row = WTB_Beg To WTB_End
         ' No AJE Flag = Skip
     Else
         ' AJE Flag = Check Desc
-        Debug.Print "Row>" & WTB_Row & "<Desc>" & .Range(WTB_Col01 & WTB_Row).Value & "<"
         If Trim(.Range(WTB_Col01 & WTB_Row).Value) = "" Then
             .Range(WTB_Col01 & WTB_Row).Value = .Range(WTB_Col01 & (WTB_Row - 1)).Value
             '.Range(WTB_Col01 & WTB_Row).Font.Color = RGB(255, 0, 0) ' Set to RED
@@ -56,7 +53,6 @@ Next WTB_Row
 End With
 
 ExitRoutine:
-Debug.Print "Complete>" & VBA_Name & "<"
 Exit Function
 
 ErrSub:
@@ -66,7 +62,6 @@ End Function
 
 Function AJE_Export()
 Const VBA_Name As String = "Export_AJE"
-Debug.Print ">" & VBA_Name & "<"
 'On Error GoTo ErrSub
 Dim Ctl_Sheet, AJE_Sheet, WTB_Sheet, Tmp1_S, Msg_01 As String
 Dim I, Tmp1_I, Tmp2_I, Row_Beg, Row_End, Row_Exp As Integer
@@ -93,7 +88,6 @@ Next WkSheet
 
 If WTB_Sheet <> "NOF" And AJE_Sheet <> "NOF" And Ctl_Sheet <> "NOF" Then
     ' OK - Fall Thru
-    Debug.Print "Worksheets Found"
 Else
     Msg_01 = VBA_Name & Chr(13) & Chr(10)
     If Ctl_Sheet = "NOF" Then Msg_01 = Msg_01 & "Can NOT find the [CONTROL Sheet]" & Chr(13) & Chr(10)
@@ -105,32 +99,25 @@ Else
     GoTo ExitRoutine
 End If
 ' Prep WTB_sheet Account Desc's
-Debug.Print ">" & VBA_Name & "< Call AJE_Prep"
 AJE_Prep
-Debug.Print "Return to >" & VBA_Name & "< from AJE_Prep"
 ' Purge AJE_Sheet
 FindRow AJE_Sheet, "A", Row_Beg, "<HDR>"
 Row_Exp = Row_Beg
 Row_Beg = Row_Beg + 1
 FindLastRow AJE_Sheet, Row_End
 Row_End = Row_End + 3
-Debug.Print "Purge Range = >" & Row_Beg & "<to>" & Row_End & "<"
 If Row_End >= Row_Beg Then
     ' Purge = Yes
     Tmp1_S = "A" & Row_Beg & ":" & "A" & Row_End
-    Debug.Print "Purge Range>" & Tmp1_S & "<"
     Worksheets(AJE_Sheet).Range(Tmp1_S).EntireRow.Delete
 End If
 ' Build Arrays
 'CTL_Col() Array
-Debug.Print "CTL_COL() Array"
 For I = 1 To 3
     Tmp1_S = "<COL_" & Right((100 + I), 2) & ">"
     FindColNumLtr Ctl_Sheet, 1, Tmp1_I, CTL_Col(I), Tmp1_S
-    Debug.Print "Find >" & Tmp1_S & "<at>" & CTL_Col(I) & "<"
 Next I
 ' WTB_Col() Array
-Debug.Print "WTB_Col() Array"
 FindRow Ctl_Sheet, "A", Row_Beg, "<WTB_BEG>"
 Tmp1_I = Worksheets(Ctl_Sheet).Range(CTL_Col(2) & (Row_Beg - 1)).Value
 ReDim WTB_Col(Tmp1_I)
@@ -142,7 +129,6 @@ For Tmp1_I = Row_Beg To Row_End
     FindColNumLtr WTB_Sheet, 1, Tmp2_I, WTB_Col(I), Tmp2_S
 Next Tmp1_I
 ' AJE_Col() Array
-Debug.Print "AJE_Col() Array"
 FindRow Ctl_Sheet, "A", Row_Beg, "<AJE_BEG>"
 Tmp1_I = Worksheets(Ctl_Sheet).Range(CTL_Col(2) & (Row_Beg - 1)).Value
 ReDim AJE_Col(Tmp1_I)
@@ -204,10 +190,8 @@ SortArea AJE_Sheet, "A", Row_Beg, AJE_Col(5), Row_End, "A", AJE_Col(1)
 ' AJE Totals
 FindRow WTB_Sheet, "A", I, "<NET_INCOME_LOSS>"
 Tmp1_S = "=Sum(" & AJE_Col(4) & Row_Beg & ":" & AJE_Col(4) & Row_End & ")"
-Debug.Print "Tmp1_S >" & Tmp1_S & "<"
 Worksheets(AJE_Sheet).Range(AJE_Col(4) & (Row_End + 2)).Formula = Tmp1_S
 Tmp1_S = "=Sum(" & AJE_Col(5) & Row_Beg & ":" & AJE_Col(5) & Row_End & ")"
-Debug.Print "Tmp1_S >" & Tmp1_S & "<"
 Worksheets(AJE_Sheet).Range(AJE_Col(5) & (Row_End + 2)).Formula = Tmp1_S
 ' WTB to AJE Reconcile = Format Background
 If Abs(Round(Worksheets(WTB_Sheet).Range(WTB_Col(4) & I).Value, 2)) = Abs(Round(Worksheets(AJE_Sheet).Range(AJE_Col(4) & (Row_End + 2)).Value, 2)) Then
@@ -227,7 +211,6 @@ End If  ' Reconcile Cr Col
 
 
 ExitRoutine:
-Debug.Print "Complete>" & VBA_Name & "<"
 ActiveSheet.Protect DrawingObjects:=False, Contents:=True, Scenarios:=True _
         , AllowFormattingCells:=True, AllowFormattingColumns:=True, _
         AllowFormattingRows:=True, AllowInsertingHyperlinks:=True

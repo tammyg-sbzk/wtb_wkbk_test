@@ -59,12 +59,9 @@ FindColNumLtr TmpStr03, 1, TmpNum01, TmpStr02, "<DESC>"
 TmpStr01 = UCase(Trim(Worksheets(TmpStr03).Cells(4, 1).Value))
 TmpStr02 = UCase(Trim(Worksheets(TmpStr03).Cells(4, TmpNum01).Value))
 If TmpStr01 <> TmpStr02 Then
-'Debug.Print "Names Are diffferent"
 Worksheets(TmpStr03).Cells(4, 1).Value = TmpStr02
 FindColNumLtr T_Sheet, 1, TmpNum01, TmpStr03, FindNameCol
-'Debug.Print "Name Column TmpStr01>" & TmpStr01 & "<"
 FindRow T_Sheet, TmpStr03, TmpNum01, TmpStr01
-'Debug.Print "At Col>" & TmpStr03 & "<Row>" & TmpNum01 & "<insert>" & TmpStr02 & "<"
 If TmpNum01 > 0 Then Worksheets(T_Sheet).Range(TmpStr03 & TmpNum01).Value = TmpStr02
 End If
 End Sub
@@ -168,7 +165,6 @@ Worksheets(C_Sheet).Cells(S_Row, (S_Col + 1)).Value = Format((S_End - S_Beg), "h
 End Sub
 
 Function FindLastRow(L_Sheet, L_Row)
-'Debug.Print "FindLastRow>" & L_Sheet & "<"
 On Error Resume Next
 L_Row = 0
 L_Row = Worksheets(L_Sheet).Cells.Find("*", SearchOrder:=xlByRows, SearchDirection:=xlPrevious).Row
@@ -186,7 +182,6 @@ Dim RowBeg, RowEnd As Long
 FindRow P_Sheet, "A", RowBeg, "<Hdr>"
 RowBeg = RowBeg + 1
 RowEnd = Worksheets(P_Sheet).Range("A65536").End(xlUp).Row ' Find Last Row of Data
-'Debug.Print "Purge>A" & RowBeg & ":A" & RowEnd & "<"
 If RowEnd > RowBeg Then
 ' Purge Sheet
     Worksheets(P_Sheet).Range("A" & RowBeg & ":" & "A" & RowEnd).EntireRow.Delete
@@ -218,7 +213,6 @@ Loop
 ColCnt = ColCnt - 1
 NumToLtr ColCnt, ColLtr
 ColRange = StartCol & ":" & ColLtr
-' Debug.Print "ColRange>" & ColRange & "<"
 Worksheets(FitSheet).Range(ColRange).Columns.AutoFit
 End Sub
 
@@ -238,7 +232,6 @@ PrepCol = 1
 Do While Trim(Worksheets(PrepSheet).Cells(1, PrepCol).Value) > ""
 PrepStr = UCase(Trim(Worksheets(PrepSheet).Cells(1, PrepCol).Value))
 CleanString PrepStr
-' Debug.Print "PrepCol>" & PrepCol & "<>" & Worksheets(PrepSheet).Cells(1, PrepCol).Value & "<"
 If Left(PrepStr, 1) = "<" Then
 ' Already Prepped
 Else
@@ -270,9 +263,6 @@ Function FindColNumLtr(Tsheet, Trow, Tnum, Tltr, Tstr)
 
 On Error GoTo ErrHandler
 
-'Debug.Print "FindColNumLtr"
-'Debug.Print "Tsheet>" & Tsheet & "<"
-'Debug.Print "Trow>" & Trow & "<"
 
 Tnum = Worksheets(Tsheet).Rows(Trow).Find(Tstr, SearchOrder:=xlByColumns, LookIn:=xlValues, SearchDirection:=xlNext).Column
 
@@ -282,13 +272,9 @@ Else
     Tltr = Chr(Tnum + 64)
 End If
 
-'Debug.Print "GoodTnum>" & Tnum & "<"
-'Debug.Print "GoodTltr>" & Tltr & "<"
 Exit Function
 
 ErrHandler:
-'Debug.Print "ErrTnum>" & Tnum & "<"
-'Debug.Print "ErrTltr>" & Tltr & "<"
 Tnum = 0
 Tltr = ""
 
@@ -312,7 +298,6 @@ If ClrStr = "NoCol" Then
 ' No Columns to Delete
 Else
 FindColNumLtr ClrSheet, ClrStart, ClrNum, ClrLtr, ClrStr
-'Debug.Print "ClrSheet>" & ClrSheet & "<ClrStr>" & ClrStr & "<ClrLtr>" & ClrLtr & "<"
 If ClrLtr > "" Then
     Worksheets(ClrSheet).Range(ClrLtr & "1:ZZ" & 1).EntireColumn.Delete
 End If
@@ -326,12 +311,6 @@ End Sub
 
 Function FindRowReverse(FRsheet, FRCol, FRbeg, FRend, FRrow, FRstr)
 Dim Tmp_Row As Long
-'Debug.Print "FRsheet>" & FRsheet & "<"
-'Debug.Print "FRcol>" & FRCol & "<"
-'Debug.Print "FRbeg>" & FRbeg & "<"
-'Debug.Print "FRend>" & FRend & "<"
-'Debug.Print "FRrow>" & FRrow & "<"
-'Debug.Print "FRstr>" & FRstr & "<"
 Set Target = Worksheets(FRsheet).Range(FRCol & FRbeg & ":" & FRCol & FRend).Find(FRstr, LookIn:=xlValues, SearchDirection:=xlPrevious)
 If Not Target Is Nothing Then
     FRrow = Rows(Target.Row).Row
@@ -343,10 +322,6 @@ End Function
 
 
 Function FindRow(FRsheet, FRCol, FRrow, FRstr)
-'Debug.Print "FRsheet>" & FRsheet & "<"
-'Debug.Print "FRcol>" & FRcol & "<"
-'Debug.Print "FRrow>" & FRrow & "<"
-'Debug.Print "FRstr>" & FRstr & "<"
        Set Target = Worksheets(FRsheet).Columns(FRCol).Find(FRstr, LookIn:=xlValues)
         If Not Target Is Nothing Then
           FRrow = Rows(Target.Row).Row
@@ -357,16 +332,7 @@ End Function
 
 Function FindRowAfter(FRsheet, FRCol, FRafter, FRrow, FRstr)
 On Error GoTo ErrSub
-'Debug.Print "Find Row After"
-'Debug.Print "FRA FRsheet>" & FRsheet & "<"
-'Debug.Print "FRA FRcol>" & FRcol & "<"
-'Debug.Print "FRA FRafter>" & FRafter & "<"
-'Debug.Print "FRA FRrow>" & FRrow & "<"
-'Debug.Print "FRA FRstr>" & FRstr & "<"
-'Dim TmpLast As Long
-'Debug.Print "Call FindLastRow"
 FindLastRow FRsheet, TmpLast
-Debug.Print "Last Row >" & TmpLast & "<"
 FRrow = 0
 
 FRrow = Worksheets(FRsheet).Range(FRCol & FRafter & ":" & FRCol & TmpLast).Find(What:=FRstr, LookIn:=xlValues).Row
@@ -385,7 +351,6 @@ GoTo ExitRoutine
 End Function
 
 Function FindBegColumn(FAW_Beg, FAW_Sheet, FAW_Find, FAW_Col, FAW_Row)
-'Debug.Print "FindAnyWhere()>" & FAW_Sheet & "<Find>" & FAW_Find & "<"
 Dim FAW_Str, End_Col As String
 Dim FAW_I As Integer
 Dim RngFound As Range
@@ -397,16 +362,13 @@ FindLastRow FAW_Sheet, End_Row
 With Worksheets(FAW_Sheet).Range(FAW_Beg & 1 & ":" & End_Col & End_Row)
     Set RngFound = .Find(FAW_Find, LookIn:=xlValues)
     If Not RngFound Is Nothing Then
-        'Debug.Print "Found>" & FAW_Find & "<"
         FAW_Str = RngFound.Address
-        'Debug.Print "FAW_Str>" & FAW_Str & "<"
         FAW_Str = Mid(FAW_Str, 2, 10)
         FAW_I = InStr(FAW_Str, "$")
         FAW_Col = Left(FAW_Str, (FAW_I - 1))
         FAW_I = InStr(FAW_Str, "$")
         FAW_Row = Mid(FAW_Str, (FAW_I + 1), 10)
     Else
-        'Debug.Print "Not Found>" & FAW_Find & "<"
         FAW_Col = "NOF"
         FAW_Row = 0
     End If
@@ -415,7 +377,6 @@ End With
 End Function
 
 Function FindAnyWhere(FAW_Sheet, FAW_Find, FAW_Col, FAW_Row)
-'Debug.Print "FindAnyWhere()>" & FAW_Sheet & "<Find>" & FAW_Find & "<"
 Dim FAW_Str As String
 Dim FAW_I As Integer
 Dim RngFound As Range
@@ -423,16 +384,13 @@ Dim RngFound As Range
 With Worksheets(FAW_Sheet).Cells
     Set RngFound = .Find(FAW_Find, LookIn:=xlValues)
     If Not RngFound Is Nothing Then
-'        Debug.Print "Found>" & FAW_Find & "<"
         FAW_Str = RngFound.Address
-'        Debug.Print "FAW_Str>" & FAW_Str & "<"
         FAW_Str = Mid(FAW_Str, 2, 10)
         FAW_I = InStr(FAW_Str, "$")
         FAW_Col = Left(FAW_Str, (FAW_I - 1))
         FAW_I = InStr(FAW_Str, "$")
         FAW_Row = Mid(FAW_Str, (FAW_I + 1), 10)
     Else
-'        Debug.Print "Not Found>" & FAW_Find & "<"
         FAW_Col = "NOF"
         FAW_Row = 0
     End If
@@ -441,7 +399,6 @@ End With
 End Function
 
 Function FindAnyWhereAfterRow(FAW_Sheet, FAW_After, FAW_Find, FAWfind_Col, FAWfind_Row, FAWrtn_Col, FAWrtn_Row)
-Debug.Print "FindAnyWhere()>" & FAW_Sheet & "<After>" & FAW_After & "<Find>" & FAW_Find & "<FAW_Col>" & FAW_Col & "<FAW_Row>" & FAW_Row & "<"
 Dim FAW_Str As String
 Dim FAW_I As Integer
 Dim RngFound As Range
@@ -449,16 +406,13 @@ Dim RngFound As Range
 With Worksheets(FAW_Sheet).Range("A" & FAW_After & ":" & FAWfind_Col & FAWfind_Row)
     Set RngFound = .Find(FAW_Find, LookIn:=xlValues)
     If Not RngFound Is Nothing Then
-        Debug.Print "Found>" & FAW_Find & "<"
         FAW_Str = RngFound.Address
-        Debug.Print "FAW_Str>" & FAW_Str & "<"
         FAW_Str = Mid(FAW_Str, 2, 10)
         FAW_I = InStr(FAW_Str, "$")
         FAWrtn_Col = Left(FAW_Str, (FAW_I - 1))
         FAW_I = InStr(FAW_Str, "$")
         FAWrtn_Row = Mid(FAW_Str, (FAW_I + 1), 10)
     Else
-        Debug.Print "Not Found>" & FAW_Find & "<"
         FAWrtn_Col = "NOF"
         FAWrtn_Row = 0
     End If
@@ -501,16 +455,6 @@ End Function
 
 Sub SortArea(Sort_Sheet, SortColStart, SortRowStart, SortColRight, SortRowEnd, SortCol_1, SortCol_2)
 Dim SortEnd As Long
-
-Debug.Print "SortSheet>" & Sort_Sheet & "<"
-Debug.Print "SortColStart>" & SortColStart & "<"
-Debug.Print "SortRowStart>" & SortRowStart & "<"
-Debug.Print "SortColRight>" & SortColRight & "<"
-Debug.Print "SortRowEnd>" & SortRowEnd & "<"
-Debug.Print "SortCol_1>" & SortCol_1 & "<"
-Debug.Print "SortCol_2>" & SortCol_2 & "<"
-
-' SortEnd = Worksheets(Sort_Sheet).Cells(Rows.Count, 1).End(xlUp).Row
 
 Worksheets(Sort_Sheet).Range(SortColStart & SortRowStart & ":" & SortColRight & SortRowEnd).Sort Key1:=Worksheets(Sort_Sheet).Range(SortCol_1 & SortRowStart), Key2:=Worksheets(Sort_Sheet).Range(SortCol_2 & SortRowStart)
 End Sub
